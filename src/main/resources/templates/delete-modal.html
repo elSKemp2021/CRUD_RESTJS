@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="java">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Delete Modal form</title>
+</head>
+<body>
+
+<div class="container-fluid">
+
+    <div class="row justify-content-center">
+        <div class="col-8">
+
+            <form th:method="DELETE" th:action="@{/admin/delete}" th:object="${user}">
+                <div class="form-group">
+                    <input th:field="*{id}" type="hidden">
+                    <label class="text-center">
+                        <strong>ID</strong>
+                    </label>
+                    <input type="text" class="form-control disabled" disabled th:value="*{id}">
+                </div>
+                <div class="form-group">
+                    <label class="text-center">
+                        <strong>First name</strong>
+                    </label>
+                    <input th:field="*{nameFirst}" class="form-control disabled" disabled>
+                </div>
+                <div class="form-group">
+                    <label class="text-center">
+                        <strong>Last name</strong>
+                    </label>
+                    <input th:field="*{nameLast}" class="form-control disabled" disabled>
+                </div>
+                <div class="form-group">
+                    <label class="text-center">
+                        <strong>Age</strong>
+                    </label>
+                    <input th:field="*{age}" class="form-control disabled" disabled>
+                </div>
+                <div class="form-group">
+                    <label class="text-center">
+                        <strong>Email</strong>
+                    </label>
+                    <input th:field="*{email}" type="email" class="form-control" disabled>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <strong>Role</strong>
+                    </label>
+                    <select th:field="*{roles}" class="form-control" multiple disabled>
+                        <option th:each="role: ${rolesList}" th:value="${role.id}" th:text="${role.rolename}"></option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
