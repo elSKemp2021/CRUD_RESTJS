@@ -1,19 +1,18 @@
-//package jm.pp.rescuer313.controller;
+//package webapp.controller;
 //
-//import jm.pp.rescuer313.ExeptionHandler.DataInfoHandler;
-//import jm.pp.rescuer313.ExeptionHandler.UserWithSuchLoginExist;
-//import jm.pp.rescuer313.model.User;
-//import jm.pp.rescuer313.service.UserService;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.dao.DataIntegrityViolationException;
 //import org.springframework.http.HttpStatus;
 //import org.springframework.http.ResponseEntity;
 //import org.springframework.validation.BindingResult;
 //import org.springframework.web.bind.annotation.*;
+//import webapp.ExeptionHandler.DataInfoHandler;
+//import webapp.ExeptionHandler.UserWithSuchLoginExist;
 //import webapp.entity.User;
 //import webapp.service.UserService;
 //
 //import javax.validation.Valid;
+//import java.util.List;
 //import java.util.Set;
 //import java.util.stream.Collectors;
 //
@@ -30,13 +29,13 @@
 //
 //    @GetMapping("/users")
 //    public ResponseEntity<Set<User>> apiGetAllUsers() {
-//        Set<User> users = userService.findAllUsers();
+//        List<User> users = userService.getAllUsers();
 //        return new ResponseEntity<>(users, HttpStatus.OK);
 //    }
 //
 //    @GetMapping("/users/{id}")
 //    public ResponseEntity<User> apiGetOneUser(@PathVariable("id") long id) {
-//        User user = userService.findUserById(id);
+//        User user = userService.getUserById(id);
 //        return new ResponseEntity<>(user, HttpStatus.OK);
 //    }
 //
@@ -48,7 +47,7 @@
 //            return new ResponseEntity<>(new DataInfoHandler(error), HttpStatus.BAD_REQUEST);
 //        }
 //        try {
-//            userService.addNewUser(user);
+//            userService.create(user);
 //            return new ResponseEntity<>(HttpStatus.OK);
 //        } catch (DataIntegrityViolationException e) {
 //            throw new UserWithSuchLoginExist("User with such login Exist");
@@ -64,7 +63,7 @@
 //            return new ResponseEntity<>(new DataInfoHandler(error), HttpStatus.BAD_REQUEST);
 //        }
 //        try {
-//            userService.updateUser(user);
+//            userService.update(user);
 //            return new ResponseEntity<>(HttpStatus.OK);
 //        } catch (DataIntegrityViolationException e) {
 //            throw new UserWithSuchLoginExist("User with such login Exist");
@@ -73,7 +72,7 @@
 //
 //    @DeleteMapping("users/{id}")
 //    public ResponseEntity<DataInfoHandler> apiDeleteUser(@PathVariable("id") long id) {
-//        userService.deleteUserById(id);
+//        userService.getUserById(id);
 //        return new ResponseEntity<>(new DataInfoHandler("User was deleted"), HttpStatus.OK);
 //    }
 //
@@ -85,3 +84,69 @@
 //    }
 //
 //}
+package webapp.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import webapp.entity.Role;
+import webapp.entity.User;
+import webapp.model.Role;
+import webapp.model.User;
+import webapp.service.RoleService;
+import webapp.service.UserService;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+@RestController
+@RequestMapping("/admin")
+public class RestControllerCustom {
+
+    private final UserService userService;
+    private final RoleService roleService;
+
+    @Autowired
+    public RestControllerCustom(UserService userService, RoleService roleService) {
+        this.userService = userService;
+        this.roleService = roleService;
+    }
+
+    @GetMapping("/users")
+    public List<User> getAllUsers() {
+        return userService.getAllUsers();
+    }
+
+    @GetMapping("/{id}")
+    public User getUser(@PathVariable("id") long id) {
+        return userService.getUserById(id);
+    }
+
+    @PostMapping
+    public User addUser(@RequestBody User user) {
+        userService.create(user);
+        return user;
+    }
+
+    @PutMapping("/{id}")
+    @ResponseBody
+    public User editUser(@PathVariable("id") long id, @RequestBody User user) {
+        List<Role> list = new ArrayList<>(user.getRoles());
+        if (!list.isEmpty()) {
+            long idRole = Long.parseLong(list.get(0).getRolename());
+            if (idRole == 2) {
+                user.setRoles(roleService.getRoleByRolename();
+            } else {
+                user.setRoles(Collections.singleton(roleService.getAllRoles(1L)));
+            }
+        }
+        userService.update(user);
+        return user;
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteUser(@PathVariable("id") long id) {
+        userService.delete(userService.getUserById(id));
+    }
+}
+
